@@ -1,0 +1,42 @@
+# ===========================================================
+# 智旅云图 依赖列表
+# 安装方式：pip install -r requirements.txt
+# ===========================================================
+
+# LangChain + DeepSeek (OpenAI 兼容格式)
+langchain>=0.3.0
+langchain-openai>=0.2.0
+
+# HTTP 请求 (Embedding API 调用)
+httpx>=0.27.0
+
+# FAISS 向量搜索
+faiss-cpu>=1.8.0
+
+# 数值计算 (向量归一化)
+numpy>=1.26.0
+
+# MySQL 数据库连接
+sqlalchemy>=2.0.0
+pymysql>=1.1.0
+
+# 环境变量管理
+python-dotenv>=1.0.0
+
+# Pydantic 数据验证 (LangChain 依赖，也直接使用)
+pydantic>=2.0.0
+
+# 网络搜索 (攻略检索 fallback + 交通费用，使用搜狗搜索)
+httpx>=0.27.0
+beautifulsoup4>=4.12.0
+lxml>=5.0.0
+
+# FastAPI Web Server
+fastapi>=0.115.0
+uvicorn>=0.30.0
+
+# Password hashing
+bcrypt>=4.2.0
+
+# File upload / multipart form support
+python-multipart>=0.0.9

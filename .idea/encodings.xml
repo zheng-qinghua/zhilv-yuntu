@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/agents/trip_planner_agent.py" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/database/chunk_repo.py" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/datamodels/schemas.py" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/main.py" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/services/trip_service.py" charset="GBK" />
+  </component>
+</project>

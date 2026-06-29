@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>智旅云图 - 智能旅行助手</title>
+<link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+<!-- ====== SIDEBAR ====== -->
+<aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+        <div class="logo-badge">智旅</div>
+    </div>
+
+    <div class="sidebar-new-chat">
+        <button id="btnNewChat">+ 开启新规划</button>
+    </div>
+
+    <div class="sidebar-section">最近聊天</div>
+    <div class="sidebar-list" id="recentChats"></div>
+
+    <div class="sidebar-section">已收藏聊天</div>
+    <div class="sidebar-list" id="favChats"></div>
+
+    <div class="sidebar-section">参考文档</div>
+    <div class="admin-panel" id="adminPanel" style="display:none"></div>
+    <div style="padding:4px 16px;font-size:11px;color:#666" id="adminHint" hidden></div>
+
+    <div class="sidebar-footer">
+        <span class="username" id="sidebarUsername"></span>
+        <button class="logout-btn" id="btnLogout">退出登录</button>
+    </div>
+</aside>
+
+<!-- ====== MAIN CHAT ====== -->
+<main class="main" id="mainArea">
+    <div class="main-header">
+        <div class="header-logo">智旅</div>
+        <span class="header-title" id="headerTitle">智旅云图</span>
+    </div>
+
+    <div class="chat-messages" id="chatMessages">
+        <div class="empty-state" id="emptyState">
+            <div class="empty-logo">智旅</div>
+            <h2>今天想去哪里旅行？</h2>
+            <p>我可以帮你规划行程，也可以回答任何旅行相关问题</p>
+            <div class="example-chips">
+                <span class="example-chip" data-text="大理有什么值得去的景点？">大理有什么值得去的景点？</span>
+                <span class="example-chip" data-text="帮我规划一个成都3天行程，预算3000">帮我规划一个成都3天行程，预算3000</span>
+                <span class="example-chip" data-text="推荐几个西安必吃的美食">推荐几个西安必吃的美食</span>
+                <span class="example-chip" data-text="三亚适合几月份去？有什么要注意的？">三亚适合几月份去？有什么要注意的？</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="chat-input-area">
+        <div class="chat-input-wrapper">
+            <div class="chat-input-box">
+                <textarea id="msgInput" rows="1" placeholder="输入你的旅行需求或问题..."
+                    onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();App.send();}"></textarea>
+                <button class="send-btn" id="btnSend" onclick="App.send()">&#10148;</button>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- ====== AUTH OVERLAY ====== -->
+<div class="auth-overlay" id="authOverlay">
+    <div class="auth-card">
+        <div class="logo-area">
+            <div class="logo-badge-lg">智旅</div>
+        </div>
+        <h2 id="authTitle">登录 智旅云图</h2>
+        <div class="error-msg" id="authError"></div>
+        <div class="field">
+            <label>用户名</label>
+            <input type="text" id="authUsername" placeholder="请输入用户名">
+        </div>
+        <div class="field">
+            <label>密码</label>
+            <input type="password" id="authPassword" placeholder="请输入密码">
+        </div>
+        <button class="submit-btn" id="authSubmit" onclick="Auth.submit()">登 录</button>
+        <div class="switch-mode">
+            <span id="authSwitchText">没有账号？</span>
+            <a id="authSwitchLink" onclick="Auth.toggleMode()">立即注册</a>
+        </div>
+    </div>
+</div>
+
+<script src="/static/js/auth.js"></script>
+<script src="/static/js/sidebar.js"></script>
+<script src="/static/js/chat.js"></script>
+<script src="/static/js/app.js"></script>
+</body>
+</html>
