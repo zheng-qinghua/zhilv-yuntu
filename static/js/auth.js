@@ -91,10 +91,12 @@ const Auth = {
         if (!this._user) return;
         document.getElementById('sidebarUsername').textContent = this._user.username;
         if (this._user.is_admin) {
+            // Auto-load and show admin docs on login
             document.getElementById('adminPanel').style.display = 'block';
             Sidebar.loadAdminDocs();
         } else {
             document.getElementById('adminPanel').style.display = 'none';
+            document.getElementById('adminHint').hidden = true;
         }
         Sidebar.refresh();
     },

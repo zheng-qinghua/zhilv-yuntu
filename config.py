@@ -35,4 +35,10 @@ FAISS_INDEX_PATH.parent.mkdir(parents=True, exist_ok=True)
 
 TRAVEL_ORIGIN_CITY = os.getenv("TRAVEL_ORIGIN_CITY") or None
 
+# 多模态视觉模型（子Agent图片识别）
+VISION_API_KEY = os.getenv("VISION_API_KEY", "")
+VISION_MODEL = os.getenv("VISION_MODEL", "qwen3-omni-flash")
+VISION_BASE_URL = os.getenv("VISION_BASE_URL", "https://dashscope.aliyuncs.com/compatible-mode/v1")
+VISION_TIMEOUT_SECONDS = int(os.getenv("VISION_TIMEOUT_SECONDS", "60"))
+
 DATA_DIR = PROJECT_DIR / "data"

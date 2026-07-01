@@ -93,7 +93,11 @@ body {
     text-transform: uppercase;
     letter-spacing: 1px;
     font-weight: 600;
+    transition: color .15s;
 }
+
+.sidebar-section-clickable { cursor: pointer; }
+.sidebar-section-clickable:hover { color: var(--accent-light); }
 
 .sidebar-list {
     flex: 1;
@@ -283,6 +287,19 @@ body {
 .msg-bubble hr { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
 .msg-bubble pre { background: #f0f0f0; padding: 12px; border-radius: 8px; overflow-x: auto; font-size: 13px; }
 .msg-bubble code { background: #f0f0f0; padding: 2px 6px; border-radius: 4px; font-size: 13px; }
+
+/* Image in messages */
+.msg-image { margin-bottom: 10px; }
+.msg-image img {
+    max-width: 260px;
+    max-height: 200px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    object-fit: cover;
+    cursor: pointer;
+    transition: transform .15s;
+}
+.msg-image img:hover { transform: scale(1.02); }
 
 /* RAG sources accordion */
 .rag-sources {
@@ -633,3 +650,139 @@ body {
     from { opacity: 0; transform: translateY(-10px); }
     to { opacity: 1; transform: translateY(0); }
 }
+
+/* ===== IMAGE UPLOAD ===== */
+.image-upload-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    border: none;
+    background: transparent;
+    color: #888;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all .15s;
+    flex-shrink: 0;
+}
+
+.image-upload-btn:hover { color: var(--accent); background: #f0fdf9; }
+.image-upload-btn.has-image { color: var(--accent); }
+
+.image-preview {
+    margin-top: 8px;
+    position: relative;
+    display: inline-block;
+}
+
+.image-preview img {
+    max-width: 200px;
+    max-height: 120px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    object-fit: cover;
+}
+
+.image-preview-close {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: #fff;
+    color: #666;
+    font-size: 11px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.image-preview-close:hover { background: #e74c3c; color: #fff; border-color: #e74c3c; }
+
+/* ===== HEADER ACTION BUTTONS ===== */
+.main-header {
+    padding: 14px 24px;
+    border-bottom: 1px solid var(--border);
+    background: #fff;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 56px;
+}
+
+/* ===== DOCUMENT VIEWER MODAL ===== */
+.doc-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    backdrop-filter: blur(4px);
+}
+
+.doc-modal-card {
+    background: #fff;
+    border-radius: 16px;
+    width: 720px;
+    max-width: 90vw;
+    max-height: 85vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 20px 60px rgba(0,0,0,.2);
+    overflow: hidden;
+}
+
+.doc-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+}
+
+.doc-modal-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.doc-modal-close {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: #fff;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #666;
+    transition: all .15s;
+}
+
+.doc-modal-close:hover { background: #e74c3c; color: #fff; border-color: #e74c3c; }
+
+.doc-modal-body {
+    padding: 24px;
+    overflow-y: auto;
+    flex: 1;
+    font-size: 14px;
+    line-height: 1.8;
+    color: var(--text-primary);
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.doc-modal-body::-webkit-scrollbar { width: 6px; }
+.doc-modal-body::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
+
+.admin-chunk-item { cursor: pointer; }
+.admin-chunk-item:hover { background: var(--sidebar-hover); }

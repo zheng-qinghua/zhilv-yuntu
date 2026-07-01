@@ -40,3 +40,4 @@ bcrypt>=4.2.0
 
 # File upload / multipart form support
 python-multipart>=0.0.9
+

@@ -118,24 +118,88 @@ const Sidebar = {
         try {
             const resp = await fetch('/api/admin/chunks');
             if (!resp.ok) {
-                document.getElementById('adminHint').textContent = '权限不足';
+                document.getElementById('adminHint').textContent = '需要管理员权限才能查看参考文档';
                 document.getElementById('adminHint').hidden = false;
                 return;
             }
             const chunks = await resp.json();
-            let html = '';
-            for (const c of chunks.slice(0, 20)) {
-                html += `<div class="admin-chunk-item">
-                    <div class="chunk-title">${this._esc(c.title || '无标题')} (${this._esc(c.source || '')})</div>
-                    <div class="chunk-text">${this._esc((c.text || '').substring(0, 150))}</div>
-                </div>`;
-            }
-            document.getElementById('adminPanel').innerHTML = html;
+            this._renderAdminChunks(chunks);
             this._adminDocsLoaded = true;
         } catch (e) {
             console.error('loadAdminDocs:', e);
-            document.getElementById('adminHint').textContent = '加载失败';
+            document.getElementById('adminHint').textContent = '加载失败，请检查网络连接';
             document.getElementById('adminHint').hidden = false;
+        }
+    },
+
+    _renderAdminChunks(chunks) {
+        let html = '';
+        this._adminChunksCache = {};
+        for (const c of chunks.slice(0, 20)) {
+            this._adminChunksCache[c.id] = c;
+            const escapedTitle = this._esc(c.title || '无标题');
+            const escapedSource = this._esc(c.source || '');
+            const escapedText = this._esc((c.text || '').substring(0, 150));
+            html += `<div class="admin-chunk-item" data-chunk-id="${this._esc(c.id)}" onclick="Sidebar.viewChunk('${this._esc(c.id)}')" title="点击查看全文">
+                <div class="chunk-title">${escapedTitle} (${escapedSource})</div>
+                <div class="chunk-text">${escapedText}...</div>
+            </div>`;
+        }
+        document.getElementById('adminPanel').innerHTML = html;
+    },
+
+    async viewChunk(chunkId) {
+        const modal = document.getElementById('docModal');
+        document.getElementById('docModalTitle').textContent = '加载中...';
+        document.getElementById('docModalBody').innerHTML = '<div class="loading-dots"><span></span><span></span><span></span></div>';
+        modal.style.display = 'flex';
+
+        try {
+            const resp = await fetch(`/api/admin/chunks/${encodeURIComponent(chunkId)}`);
+            if (!resp.ok) {
+                document.getElementById('docModalBody').innerHTML = '<p style="color:#e74c3c">加载失败：权限不足或文档不存在</p>';
+                return;
+            }
+            const chunk = await resp.json();
+            document.getElementById('docModalTitle').textContent = `${chunk.title || '无标题'} (${chunk.source || '未知来源'})`;
+            document.getElementById('docModalBody').innerHTML = this._esc(chunk.text || '无内容');
+        } catch (e) {
+            console.error('viewChunk:', e);
+            document.getElementById('docModalBody').innerHTML = '<p style="color:#e74c3c">加载失败：网络错误</p>';
+        }
+    },
+
+    closeDocModal() {
+        document.getElementById('docModal').style.display = 'none';
+    },
+
+    _initDocModal() {
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                const modal = document.getElementById('docModal');
+                if (modal && modal.style.display === 'flex') {
+                    modal.style.display = 'none';
+                }
+            }
+        });
+    },
+
+    async toggleAdminDocs() {
+        const panel = document.getElementById('adminPanel');
+        const arrow = document.getElementById('refDocsArrow');
+        const hint = document.getElementById('adminHint');
+
+        if (panel.style.display === 'block') {
+            panel.style.display = 'none';
+            if (arrow) arrow.innerHTML = '&#9660;';
+            hint.hidden = true;
+        } else {
+            await this.loadAdminDocs();
+            if (this._adminDocsLoaded) {
+                panel.style.display = 'block';
+                if (arrow) arrow.innerHTML = '&#9650;';
+                hint.hidden = true;
+            }
         }
     },
 

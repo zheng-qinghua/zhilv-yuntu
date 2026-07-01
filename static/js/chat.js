@@ -92,7 +92,7 @@ const Chat = {
         });
     },
 
-    appendUserBubble(content) {
+    appendUserBubble(content, imageBlobUrl) {
         const container = document.getElementById('chatMessages');
         const empty = document.getElementById('emptyState');
         if (empty) empty.style.display = 'none';
@@ -106,7 +106,7 @@ const Chat = {
 
         const row = document.createElement('div');
         row.className = 'msg-row user';
-        row.innerHTML = this._renderBubble({ role: 'user', content: content });
+        row.innerHTML = this._renderBubble({ role: 'user', content: content, _imageBlobUrl: imageBlobUrl });
         wrapper.appendChild(row);
         container.scrollTop = container.scrollHeight;
     },
@@ -138,8 +138,25 @@ const Chat = {
         const isUser = m.role === 'user';
         const avatarChar = isUser ? '我' : '智';
         const avatar = `<div class="msg-avatar">${avatarChar}</div>`;
-        const content = this._parseMarkdown(m.content || '');
-        let bubble = `<div class="msg-bubble">${content}</div>`;
+
+        // Build image HTML if present
+        let imageHtml = '';
+        if (isUser && m._imageBlobUrl) {
+            imageHtml = `<div class="msg-image"><img src="${m._imageBlobUrl}" alt="uploaded image"></div>`;
+        }
+        // Detect ![](url) markdown in content (for history loading in user messages)
+        const imgMdMatch = (m.content || '').match(/^!\[\]\(\/photo\/([^)]+)\)/);
+        if (imgMdMatch && isUser && !m._imageBlobUrl) {
+            imageHtml = `<div class="msg-image"><img src="/photo/${imgMdMatch[1]}" alt="uploaded image"></div>`;
+        }
+
+        // Parse content — strip image markdown prefix for user messages with images
+        let contentToRender = m.content || '';
+        if (isUser && imgMdMatch) {
+            contentToRender = contentToRender.replace(/^!\[\]\(\/photo\/[^)]+\)\n*\n*/, '');
+        }
+        const content = this._parseMarkdown(contentToRender);
+        let bubble = `<div class="msg-bubble">${imageHtml}${content}</div>`;
 
         // RAG sources for assistant
         let sourcesHtml = '';
@@ -153,7 +170,7 @@ const Chat = {
             sourcesHtml += '</div></div>';
         }
 
-        const bubbleBlock = `<div class="msg-bubble">${content}${sourcesHtml}</div>`;
+        const bubbleBlock = `<div class="msg-bubble">${imageHtml}${content}${sourcesHtml}</div>`;
 
         if (isUser) {
             return `${bubbleBlock}${avatar}`;

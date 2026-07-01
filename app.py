@@ -1,4 +1,13 @@
 """智旅云图 — FastAPI Web Server"""
+import sys
+import io
+
+# 修复 Windows 下 console 的 GBK 编码问题
+if sys.stdout.encoding != "utf-8":
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
+if sys.stderr.encoding != "utf-8":
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8")
+
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
@@ -17,6 +26,7 @@ from auth.service import AuthService
 
 PROJECT_DIR = Path(__file__).resolve().parent
 STATIC_DIR = PROJECT_DIR / "static"
+PHOTO_DIR = PROJECT_DIR / "photo"
 
 
 def _ensure_admin_user():
@@ -51,6 +61,13 @@ async def lifespan(app: FastAPI):
     retriever = Retriever(vec_index, embed_service, chunk_repo)
     trip_service = TripService(retriever, chunk_repo)
 
+    # ---- 注册 Agent 工具 ----
+    from agents.tools import RAGSearchTool, WebSearchTool, VisionAnalyzeTool, register_tool
+    register_tool("rag_search", RAGSearchTool(retriever))
+    register_tool("web_search", WebSearchTool())
+    register_tool("vision_analyze", VisionAnalyzeTool())
+    print(f"[app] 已注册 3 个 Agent 工具: rag_search, web_search, vision_analyze")
+
     app.state.chunk_repo = chunk_repo
     app.state.vec_index = vec_index
     app.state.embed_service = embed_service
@@ -79,6 +96,10 @@ app.include_router(admin_router)
 
 # 静态文件
 app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
+
+# 确保 photo 目录存在
+PHOTO_DIR.mkdir(parents=True, exist_ok=True)
+app.mount("/photo", StaticFiles(directory=str(PHOTO_DIR)), name="photo")
 
 
 @app.get("/")

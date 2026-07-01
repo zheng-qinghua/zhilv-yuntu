@@ -1,5 +1,7 @@
-"""Chat endpoints: send, sessions CRUD."""
-from fastapi import APIRouter, Request, HTTPException
+"""Chat endpoints: send, image upload, sessions CRUD."""
+import shutil
+from pathlib import Path
+from fastapi import APIRouter, Request, HTTPException, UploadFile, File, Form
 from datamodels.chat_schemas import (
     SendMessageRequest, SendMessageResponse,
     SessionItem, SessionDetail, UpdateSessionRequest,
@@ -8,6 +10,7 @@ from auth.middleware import get_current_user
 from services.chat_service import ChatService
 
 router = APIRouter(prefix="/api/chat", tags=["chat"])
+PHOTO_DIR = Path(__file__).resolve().parent.parent / "photo"
 
 
 def _get_chat_service(request: Request) -> ChatService:
@@ -27,6 +30,36 @@ def send_message(body: SendMessageRequest, request: Request):
             user_id=user["id"],
             session_id=body.session_id,
             content=body.content,
+        )
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/upload-image")
+def upload_image(
+    request: Request,
+    file: UploadFile = File(...),
+    session_id: str = Form(default=""),
+    message: str = Form(default=""),
+):
+    """Upload an image for landmark recognition."""
+    user = get_current_user(request)
+
+    # Save image to photo dir
+    PHOTO_DIR.mkdir(parents=True, exist_ok=True)
+    file_path = PHOTO_DIR / file.filename
+    with open(file_path, "wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+
+    sid = int(session_id) if session_id else None
+    chat_service = _get_chat_service(request)
+    try:
+        result = chat_service.handle_message(
+            user_id=user["id"],
+            session_id=sid,
+            content=message or "",
+            image_filename=file.filename,
         )
         return result
     except Exception as e:
